@@ -1,0 +1,1 @@
+Write a software program using the Akka actor model that can read from the directory with embarrassingly parallel and asynchronous fashion and provide analysis ASAP. (N number of Akka actors are allowed)
