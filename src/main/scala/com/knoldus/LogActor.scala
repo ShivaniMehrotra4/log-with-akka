@@ -15,7 +15,8 @@ class LogActor extends Actor {
     case fileName(file) =>
       val fSource = Source.fromFile(s"$file")
       val listOfLines = fSource.getLines().toList
-      val cd = finder(listOfLines)
+      finder(listOfLines)
+      
     case "shivani" => val cd = newDataStrucutre(numOfErrors, numOfWarnings, numOfInfo)
       f1(cd).pipeTo(context.sender())
   }
