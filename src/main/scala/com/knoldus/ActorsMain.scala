@@ -19,10 +19,16 @@ object ActorsMain extends App {
   val actorSystem = ActorSystem("First-Actor-System")
   val listOfActorRef = mine(listOfFiles, List())
   val x = futureList(listOfActorRef, List())
-  val final1 = Future.sequence(x).map(an => an.foldLeft(newDataStrucutre(0, 0, 0)) { (acc, y) => f2(acc, y) })
-  val finalResult = Await.result(final1, 1 second)
+  val almostFinal = Future.sequence(x).map(an => an.foldLeft(newDataStrucutre(0, 0, 0)) { (acc, y) => caseClassMembersAddition(acc, y) })
+  val finalResult = Await.result(almostFinal, 1 second)
   println(finalResult)
 
+  /**
+   * mine function basically calls the actors for each individual files.
+   * @param listOfFiles - list of file names in a directory
+   * @param listOfActorRef - list of ActorRef (references to an actor)
+   * @return - a list of ActorRef
+   */
   @scala.annotation.tailrec
   def mine(listOfFiles: List[String], listOfActorRef: List[ActorRef]): List[ActorRef] = {
     listOfFiles match {
@@ -35,6 +41,12 @@ object ActorsMain extends App {
     }
   }
 
+  /**
+   * futureList function returns a list that contains all case class objects with future wrapper.
+   * @param value - a list of actor references.
+   * @param futureLst - a list containing futures of case class objects (initially empty).
+   * @return - list of future of case class objects
+   */
   @scala.annotation.tailrec
   def futureList(value: List[ActorRef], futureLst: List[Future[newDataStrucutre]]): List[Future[newDataStrucutre]] = {
     implicit val timeout: Timeout = Timeout(5 second)
@@ -46,7 +58,13 @@ object ActorsMain extends App {
     }
   }
 
-  def f2(acc: newDataStrucutre, y: newDataStrucutre): newDataStrucutre = {
+  /**
+   * f2 function performs addition of member's values on two case class objects
+   * @param acc - first case class object
+   * @param y - second case class object
+   * @return - case class object after addition
+   */
+  def caseClassMembersAddition(acc: newDataStrucutre, y: newDataStrucutre): newDataStrucutre = {
     newDataStrucutre(acc.countError + y.countError, acc.countWarnings + y.countWarnings, acc.countInfo + y.countInfo)
   }
 
