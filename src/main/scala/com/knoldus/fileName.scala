@@ -1,3 +1,3 @@
 package com.knoldus
 
-case class fileName()
+case class fileName(file: String)

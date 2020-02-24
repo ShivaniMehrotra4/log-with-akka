@@ -1,37 +1,37 @@
 package com.knoldus
 
-import java.io.File
-
 import akka.actor.Actor
-
+import akka.pattern.pipe
+import scala.concurrent.Future
 import scala.io.Source
-
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class LogActor extends Actor {
+  var numOfErrors = 0
+  var numOfWarnings = 0
+  var numOfInfo = 0
+
   override def receive: Receive = {
-    case "Error" =>
-      val file = new File("/home/knoldus/Documents/SampleFolderLogs/stdout")
-      val fileName = file.toString
-      val fSource = Source.fromFile(s"$fileName")
-      val countValues = fSource.getLines().flatMap(_.split(" ")).toList.groupBy((word: String) => word).view.mapValues(_.length)
-      val x = Map("error" -> countValues.get("[ERROR]"))
-      sender() ! Map("Errors" -> x("error").getOrElse(0))
-
-    case "Warning" =>
-      val file = new File("/home/knoldus/Documents/SampleFolderLogs/stdout")
-      val fileName = file.toString
-      val fSource = Source.fromFile(s"$fileName")
-      val countValues = fSource.getLines().flatMap(_.split(" ")).toList.groupBy((word: String) => word).view.mapValues(_.length)
-      val x = Map("warn" -> countValues.get("[WARN]"))
-      sender() ! Map("Warnings" -> x("warn").getOrElse(0))
-
-    case "Info" =>
-      val file = new File("/home/knoldus/Documents/SampleFolderLogs/stdout")
-      val fileName = file.toString
-      val fSource = Source.fromFile(s"$fileName")
-      val countValues = fSource.getLines().flatMap(_.split(" ")).toList.groupBy((word: String) => word).view.mapValues(_.length)
-      val x = Map("info" -> countValues.get("[INFO]"))
-      sender() ! Map("Information" -> x("info").getOrElse(0))
-
+    case fileName(file) =>
+      val fSource = Source.fromFile(s"$file")
+      val listOfLines = fSource.getLines().toList
+      val cd = finder(listOfLines)
+    case "shivani" => val cd = newDataStrucutre(numOfErrors, numOfWarnings, numOfInfo)
+      f1(cd).pipeTo(context.sender())
   }
+
+  def finder(listOfLines: List[String]): newDataStrucutre = {
+    listOfLines match {
+      case Nil => newDataStrucutre(numOfErrors, numOfWarnings, numOfInfo)
+      case head :: rest if head.contains("[ERROR]") => numOfErrors += 1; finder(rest)
+      case head :: rest if head.contains("[WARN]") => numOfWarnings += 1; finder(rest)
+      case head :: rest if head.contains("[INFO]") => numOfInfo += 1; finder(rest)
+      case _ :: rest => finder(rest)
+    }
+  }
+
+  def f1(cd: newDataStrucutre): Future[newDataStrucutre] = Future {
+    cd
+  }
+
 }
