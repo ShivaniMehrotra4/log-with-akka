@@ -1,4 +1,4 @@
-name := "akka-actors-log-assignment"
+name := "akka-actors-log-upgraded-assignment"
 
 version := "0.1"
 
